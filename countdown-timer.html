@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e8eaf6, #bbdefb);
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        #timer-container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        #timer-display {
+            font-size: 3rem;
+            margin: 20px 0;
+            color: #1e88e5;
+        }
+        input[type="number"] {
+            padding: 10px;
+            width: 80px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background: #1e88e5;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+        button:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Countdown Timer</h1>
+        <p>Stelle einen Countdown ein, um deine Zeit besser zu verwalten.</p>
+    </header>
+    <div id="timer-container">
+        <div>
+            <label for="minutes">Minuten:</label>
+            <input type="number" id="minutes" placeholder="0" min="0" max="999">
+        </div>
+        <div>
+            <label for="seconds">Sekunden:</label>
+            <input type="number" id="seconds" placeholder="0" min="0" max="59">
+        </div>
+        <button id="start-btn">Starten</button>
+        <button id="reset-btn" disabled>Zurücksetzen</button>
+        <div id="timer-display">00:00</div>
+    </div>
+    <footer>
+        <p>Bleib fokussiert und nutze deine Zeit sinnvoll!</p>
+    </footer>
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const minutesInput = document.getElementById('minutes');
+        const secondsInput = document.getElementById('seconds');
+        const timerDisplay = document.getElementById('timer-display');
+
+        let timerInterval = null;
+
+        function formatTime(time) {
+            return time < 10 ? `0${time}` : time;
+        }
+
+        function updateTimerDisplay(minutes, seconds) {
+            timerDisplay.textContent = `${formatTime(minutes)}:${formatTime(seconds)}`;
+        }
+
+        function startCountdown() {
+            let totalSeconds = parseInt(minutesInput.value || 0) * 60 + parseInt(secondsInput.value || 0);
+
+            if (isNaN(totalSeconds) || totalSeconds <= 0) {
+                alert('Bitte gib eine gültige Zeit ein.');
+                return;
+            }
+
+            startBtn.disabled = true;
+            minutesInput.disabled = true;
+            secondsInput.disabled = true;
+            resetBtn.disabled = false;
+
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+
+                updateTimerDisplay(minutes, seconds);
+
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Zeit abgelaufen!');
+                    resetCountdown();
+                }
+
+                totalSeconds--;
+            }, 1000);
+        }
+
+        function resetCountdown() {
+            clearInterval(timerInterval);
+            updateTimerDisplay(0, 0);
+            startBtn.disabled = false;
+            minutesInput.disabled = false;
+            secondsInput.disabled = false;
+            resetBtn.disabled = true;
+            minutesInput.value = '';
+            secondsInput.value = '';
+        }
+
+        startBtn.addEventListener('click', startCountdown);
+        resetBtn.addEventListener('click', resetCountdown);
+    </script>
+</body>
+</html>
